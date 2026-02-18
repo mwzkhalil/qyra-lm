@@ -1,6 +1,6 @@
 model:
   base_model_name: "LiquidAI/LFM2-350M"
-  max_seq_length: 512  # Reduced from 1024 to fit in 8GB GPU memory
+  max_seq_length: 512 
 
 data:
   corpus_path: "data/urdu_corpus.txt"
@@ -27,13 +27,10 @@ paths:
 
 training:
   pretrain:
-    # Limit the number of training samples to avoid exhausting disk / RAM during preprocessing.
-    # For experimentation, values like 500_000 (testing) or 2_000_000 (moderate runs) are recommended.
-    # Set to null to process all available samples (not recommended on small disks).
     max_train_samples: 500000
     num_epochs: 3
-    batch_size: 1  # Reduced for 8GB GPU memory
-    gradient_accumulation_steps: 16  # Increased to maintain effective batch size of 16
+    batch_size: 1 
+    gradient_accumulation_steps: 16 
     learning_rate: 2.0e-4
     weight_decay: 0.01
     warmup_ratio: 0.03
