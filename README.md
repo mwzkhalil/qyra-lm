@@ -67,8 +67,8 @@ bash scripts/05_inference.sh
 
 ## Model Cards
 
-- **Base model**: [`mahwizzzz/urdu-lfm2-base`](https://huggingface.co/mahwizzzz/urdu-lfm2-base) (Qalam-Urdu-350M)
-- **SFT model**: [`mahwizzzz/urdu-lfm2-sft`](https://huggingface.co/mahwizzzz/urdu-lfm2-sft) (Qalam-Urdu-SFT-350M)
+- **Base model**: [`mahwizzzz/qyra-350m`](https://huggingface.co/mahwizzzz/qyra-350m) 
+- **SFT model**: [`Cont.`] 
 
 ## Requirements
 
