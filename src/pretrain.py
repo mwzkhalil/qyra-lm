@@ -26,7 +26,6 @@ def _bf16_supported() -> bool:
 
 
 def run_pretraining(config_path: str | Path = "config.yaml") -> None:
-    # Fail fast if there is not enough free disk space for preprocessing / checkpoints.
     total, used, free = shutil.disk_usage("/")
     if free < 20 * 1024**3:
         raise RuntimeError("Not enough disk space. Require at least 20GB free.")
@@ -45,22 +44,18 @@ def run_pretraining(config_path: str | Path = "config.yaml") -> None:
     tokenizer = AutoTokenizer.from_pretrained(tokenizer_dir)
     model = AutoModelForCausalLM.from_pretrained(model_dir)
 
-    # Require max_train_samples to be set to prevent accidental full dataset loading
     if not cfg.max_train_samples:
         raise ValueError(
             "max_train_samples must be set in config to prevent loading 50M+ examples. "
             "Set training.pretrain.max_train_samples (e.g., 500000 for testing)."
         )
 
-    # If a local corpus file exists, use it; otherwise fall back to HF dataset
     if cfg.corpus_path.is_file():
         corpus_ds = load_corpus_as_dataset(cfg.corpus_path)
-        # Apply limit immediately for local files too
         if len(corpus_ds) > cfg.max_train_samples:
             print(f"Limiting local dataset from {len(corpus_ds):,} to {cfg.max_train_samples:,} samples...")
             corpus_ds = corpus_ds.select(range(cfg.max_train_samples))
     else:
-        # Pass max_samples to loader to avoid loading 50M+ examples
         corpus_ds = load_corpus_as_dataset_hf(
             dataset_name=cfg.hf_vocab_dataset,
             split=cfg.hf_vocab_split,
@@ -68,16 +63,14 @@ def run_pretraining(config_path: str | Path = "config.yaml") -> None:
             max_samples=cfg.max_train_samples,
         )
 
-    # Verify dataset size matches expectation
     actual_size = len(corpus_ds)
-    if actual_size > cfg.max_train_samples * 1.1:  # Allow 10% tolerance
+    if actual_size > cfg.max_train_samples * 1.1: 
         raise RuntimeError(
             f"Dataset size ({actual_size:,}) exceeds max_train_samples "
             f"({cfg.max_train_samples:,}). This indicates a bug in the data loading."
         )
     print(f"Dataset loaded: {actual_size:,} samples (max allowed: {cfg.max_train_samples:,})")
 
-    # Keep only the text column to minimize memory / disk usage.
     if "text" in corpus_ds.column_names and len(corpus_ds.column_names) > 1:
         corpus_ds = corpus_ds.remove_columns(
             [col for col in corpus_ds.column_names if col != "text"]
@@ -107,8 +100,8 @@ def run_pretraining(config_path: str | Path = "config.yaml") -> None:
         bf16=use_bf16,
         fp16=not use_bf16,
         gradient_checkpointing=pre_cfg.get("gradient_checkpointing", True),
-        dataloader_pin_memory=False,  # Reduce memory usage
-        dataloader_num_workers=0,  # Reduce memory overhead
+        dataloader_pin_memory=False, 
+        dataloader_num_workers=0, 
         report_to=[],
     )
 
