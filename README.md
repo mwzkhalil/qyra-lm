@@ -1,6 +1,6 @@
-# Urdu LFM-2 Adaptation Pipeline
+# qyra-lm
 
-Complete pipeline for adapting `LiquidAI/LFM2-350M` to Urdu via vocabulary expansion, continued pretraining, and supervised fine-tuning.
+Adapting `LiquidAI/LFM2-350M` to Urdu via vocabulary expansion, continued pretraining, and supervised fine-tuning.
 
 ## Installation
 
