@@ -1,0 +1,67 @@
+model:
+  base_model_name: "LiquidAI/LFM2-350M"
+  max_seq_length: 512  # Reduced from 1024 to fit in 8GB GPU memory
+
+data:
+  corpus_path: "data/urdu_corpus.txt"
+  sft_path: "data/urdu_sft.csv"
+  hf_vocab_dataset: "ReySajju742/shaistagi_clean"
+  hf_vocab_split: "train"
+  hf_vocab_text_field: "text"
+  hf_sft_dataset: "mahwizzzz/dumm"
+  hf_sft_split: "train"
+  hf_sft_input_field: "input"
+  hf_sft_output_field: "output"
+  eval_sample_size: 512
+
+vocab:
+  min_frequency: 5
+  top_k: 15000          
+  output_vocab_path: "artifacts/urdu_vocab_topk.txt"
+
+paths:
+  tokenizer_expanded_dir: "artifacts/tokenizer_expanded"
+  model_token_expanded_dir: "artifacts/model_token_expanded"
+  model_pretrained_dir: "artifacts/model_pretrained"
+  model_sft_dir: "artifacts/model_sft"
+
+training:
+  pretrain:
+    # Limit the number of training samples to avoid exhausting disk / RAM during preprocessing.
+    # For experimentation, values like 500_000 (testing) or 2_000_000 (moderate runs) are recommended.
+    # Set to null to process all available samples (not recommended on small disks).
+    max_train_samples: 500000
+    num_epochs: 3
+    batch_size: 1  # Reduced for 8GB GPU memory
+    gradient_accumulation_steps: 16  # Increased to maintain effective batch size of 16
+    learning_rate: 2.0e-4
+    weight_decay: 0.01
+    warmup_ratio: 0.03
+    max_grad_norm: 1.0
+    bf16: true
+    gradient_checkpointing: true
+    logging_steps: 50
+    save_strategy: "epoch"
+
+  sft:
+    num_epochs: 3
+    batch_size: 4
+    gradient_accumulation_steps: 8
+    learning_rate: 1.5e-4
+    weight_decay: 0.01
+    warmup_ratio: 0.05
+    max_grad_norm: 1.0
+    bf16: true
+    logging_steps: 50
+    save_strategy: "epoch"
+
+evaluation:
+  max_new_tokens: 256
+  temperature: 0.7
+  top_p: 0.9
+  num_eval_prompts: 8
+
+inference:
+  max_new_tokens: 256
+  temperature: 0.7
+  top_p: 0.9

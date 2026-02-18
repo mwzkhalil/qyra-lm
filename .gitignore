@@ -1,0 +1,66 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# Model Artifacts (too large for GitHub)
+artifacts/
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.ckpt
+
+# Data files
+data/
+*.txt
+*.csv
+*.jsonl
+*.parquet
+
+# HuggingFace cache
+.cache/
+hf_cache/
+huggingface_cache_backup/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Logs
+*.log
+logs/
+wandb/
+tensorboard/
+
+# Environment variables
+.env
+.env.local
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
